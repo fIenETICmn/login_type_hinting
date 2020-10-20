@@ -1,14 +1,15 @@
-from django.shortcuts import render,redirect, get_object_or_404,get_list_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import User
 from .forms import loginForm, SignUpForm
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth import get_user_model
-from django.contrib.auth import authenticate
+# from django.utils.translation import ugettext_lazy as _
+# from django.contrib.auth import get_user_model
+# from django.contrib.auth import authenticate
 
 
 def post_list(request):
     posts = User.objects.filter()
-    return render(request,'registration/signup.html',{'posts': posts})
+    return render(request, 'registration/signup.html', {'posts': posts})
+
 
 def str_name(request):
     name = User.objects.filter()
@@ -18,16 +19,19 @@ def str_name(request):
     return render(request, 'registration/signup.html', {'name': name})
     # return render(request,'registration/signup.html',{'str_username_var':str_username_var})
 
+
 def phone_no_user(request):
     ph_name = User.objects.filter()
     for i in ph_name:
         print(i.phone_no)
     return render(request, 'registration/signup.html', {'ph_name': ph_name})
 
-def post_del(requet, pk):
+
+def post_del(request, pk):
     post = get_object_or_404(User, pk=pk)
     post.delete()
     return redirect('post_list')
+
 
 def post_edit(request, pk):
     post = get_object_or_404(User, pk=pk)
@@ -42,64 +46,65 @@ def post_edit(request, pk):
         form = SignUpForm(instance=post)
     return render(request, 'task/post_edit.html', {'form': form})
 
+
 def login(request):
-    if request.method =='POST':
+    if request.method == 'POST':
         form = loginForm(request.POST)
         if form.is_valid():
             form.save()
             username = form.cleaned_date.get('username')
             raw_password = form.cleaned_date.get('password')
-            user = authenticate(username=username, password=raw_password)
+            # user = authenticate(username=username, password=raw_password)
             login(request, user)
             return redirect('post_list')
     else:
         form = loginForm()
-    return render(request, 'registration/login.html', {'form':form})
+    return render(request, 'registration/login.html', {'form': form})
 
 
 def signup(request):
     posts = User.objects.filter()
-    if request.method =='POST':
+    if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=raw_password)
+            # user = authenticate(username=username, password=raw_password)
             login(request)
             return redirect('signup')
     else:
         form = SignUpForm()
-    return render(request, 'registration/signup.html', {'form':form,'posts': posts})
+    return render(request, 'registration/signup.html', {'form': form, 'posts': posts})
 
-def active(request,obj=None,parent_obj=None):
+
+def active(request, obj=None, parent_obj=None):
     posts = User.objects.get(is_active)
-    obj=obj.User
+    obj = obj.User
     if obj:
-        if obj.is_active==True:
+        if obj.is_active:
             posts.is_active = True
             posts.save()
             return redirect('inactive')
-        elif obj.is_active==False:
+        elif not obj.is_active:
             posts.is_active = False
             posts.save()
             return redirect('isactive')
-    return render(request,"registration/signup.html", {'posts':posts})
+    return render(request, "registration/signup.html", {'posts': posts})
 
-def inactive(request,obj=None,parent_obj=None):
+
+def inactive(request, obj=None, parent_obj=None):
     posts = User.objects.get(is_active)
     posts.is_active = False
-    return render(request,"registration/signup.html", {'posts':posts})
+    return render(request, "registration/signup.html", {'posts': posts})
 
-def isactive(request,obj=None,parent_obj=None):
+
+def isactive(request, obj=None, parent_obj=None):
     posts = User.objects.get(is_active)
     posts.is_active = True
-    return render(request,"registration/signup.html", {'posts':posts})
+    return render(request, "registration/signup.html", {'posts': posts})
 
-
-
-
-#def active(request):
+# def active(request):
 #    userbig = User.objects.get()
 #    if userbig.user.is_staff = is_staff:
 #        userbig.save()
@@ -108,7 +113,7 @@ def isactive(request,obj=None,parent_obj=None):
 #   return render(request, 'registration/signup.html', {'userbig':userbig})
 
 
-#def active(request):
+# def active(request):
 #    posts = User.objects.get(is_staff,is_active)
 #    if request.method == 'POST': #* permission.is_valid():
 #        posts.is_superuser = False
@@ -120,7 +125,7 @@ def isactive(request,obj=None,parent_obj=None):
 #    return render(request,"registration/signup.html", {'posts':posts,})
 
 
-#def active(request, obj=None):
+# def active(request, obj=None):
 #    actions= User.objects.get(is_active)
 #    obj=obj.User
 #    if obj:
@@ -143,7 +148,7 @@ def isactive(request,obj=None,parent_obj=None):
 #    inactive.short_description=_("NotActive")
 
 
-#def active(request,obj=None,parent_obj=None):
+# def active(request,obj=None,parent_obj=None):
 #    user = authenticate(username,password)
 #    if user is not None:
 #        if user.is_active:   
@@ -152,4 +157,3 @@ def isactive(request,obj=None,parent_obj=None):
 #            user.is_active = True
 #    else:
 #       return render(request, 'registration/signup.html', {'userbig':userbig})
-
